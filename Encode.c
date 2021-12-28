@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,7 +8,7 @@ struct tableNode
 {
 	char letter;
 	int freq;
-	char code[8]; // use other datatype
+	char code[16]; // use other datatype
 	struct tableNode *next;
 };
 struct tableNode* getNewNode();
@@ -303,17 +302,16 @@ void WriteBit(int num,FILE *fp){
 	//printf("\nSetting %dth bit = %d of %d ",cnt,b,byte);
 	if(num==1)
 	{	temp=1;
-		temp=temp<<(7-cnt);		//right shift bits
+		temp=temp<<(7-cnt);		//left shift bits
 		byte=byte | temp;
 	}
 	cnt++;
 	
 	if(cnt==8)	//buffer full
 	{
-//		printf("[%s]",bitsInChar(byte));
 		fwrite(&byte,sizeof(char),1,fp);
-		cnt=0; byte=0;	//reset buffer
-		return;// buffer written to file
+		cnt=0; byte=0;
+		return;
 	}
 	return;
 }
@@ -323,10 +321,12 @@ code=getCode(ch);
 //printf("\n%s\n",code);
 	while(*code!='\0')
 	{
-		if(*code=='1')
-			WriteBit(1,fp); //write bit 1 into file f
-		else
+		if(*code=='1'){
+			WriteBit(1,fp);
+			}
+		else{
 			WriteBit(0,fp);
+		}
 	code++;
 	}
 	return;
@@ -343,6 +343,7 @@ void WriteToFile(char *filepath_output, char *filepath, int count){
 		temp %= 8;
 		fwrite(&q->letter,1,sizeof(char),fp);
 		fwrite(&q->code,1,sizeof(q->code),fp);
+		printf("%c: %s\n",q->letter,q->code);
 		q=q->next;
 	}
 	char padding = 8-(char)temp;
